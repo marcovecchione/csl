@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <style xmlns="http://purl.org/net/xbiblio/csl" class="note" version="1.0" default-locale="it-IT" demote-non-dropping-particle="sort-only">
   <!-- This style was edited with the Visual CSL Editor (https://editor.citationstyles.org/visualEditor/) -->
   <info>
@@ -15,7 +15,7 @@
     <category field="linguistics"/>
     <category field="philosophy"/>
     <summary>Università di Salerno - Stile di citazione dell'Università di Salerno</summary>
-    <updated>2020-07-20T19:24:22+00:00</updated>
+    <updated>2020-07-29T13:30:52+00:00</updated>
   </info>
   <locale xml:lang="it-IT">
     <terms>
@@ -230,10 +230,10 @@
             <text variable="title" form="short"/>
           </else-if>
           <else>
-            <text variable="title" form="short" quotes="false" font-style="italic" suffix=", "/>
+            <text variable="title" form="long" quotes="false" font-style="italic" suffix=", "/>
           </else>
         </choose>
-        <text term="cited" form="short"/>
+        <text term="cited" form="long"/>
       </if>
       <else>
         <text term="cited" form="long" font-style="italic"/>
@@ -271,7 +271,7 @@
   <macro name="container-title">
     <choose>
       <if type="legal_case" match="none">
-        <text variable="container-title" quotes="true" font-style="normal"/>
+        <text variable="container-title" quotes="false" font-style="italic" prefix="in "/>
       </if>
     </choose>
   </macro>
@@ -284,7 +284,7 @@
       <if type="article-journal">
         <group delimiter=" " prefix=", ">
           <text term="volume" form="short"/>
-          <text variable="volume"/>
+          <text variable="volume" text-case="capitalize-all"/>
         </group>
         <group prefix=", ">
           <text term="issue" form="short" suffix=" "/>
@@ -301,7 +301,7 @@
         <group prefix=", " delimiter=", ">
           <group>
             <text term="volume" form="short" suffix=" "/>
-            <number variable="volume" form="roman"/>
+            <number font-variant="small-caps" variable="volume" form="roman"/>
           </group>
           <choose>
             <if variable="locator" match="none">
@@ -349,14 +349,21 @@
         <choose>
           <if type="graphic report" match="any">
             <date variable="issued">
-              <date-part name="month" suffix=" "/>
-              <date-part name="day" suffix=", "/>
+              <date-part name="day" suffix=" "/>
+              <date-part name="month" text-case="lowercase" suffix=" "/>
               <date-part name="year"/>
             </date>
           </if>
           <else-if type="legal_case">
             <text variable="authority" suffix=" "/>
             <date variable="issued">
+              <date-part name="year"/>
+            </date>
+          </else-if>
+          <else-if type="entry-encyclopedia">
+            <date variable="issued">
+              <date-part name="day" prefix="versione datata " suffix=" "/>
+              <date-part name="month" text-case="lowercase" suffix=" "/>
               <date-part name="year"/>
             </date>
           </else-if>
@@ -373,8 +380,8 @@
           </else-if>
           <else>
             <date variable="issued">
+              <date-part name="day" suffix=" "/>
               <date-part name="month" text-case="lowercase" suffix=" "/>
-              <date-part name="day" suffix=", "/>
               <date-part name="year"/>
             </date>
           </else>
@@ -396,7 +403,7 @@
                   <group>
                     <text term="volume" form="short" text-case="lowercase" suffix=" "/>
                     <number variable="volume" form="numeric"/>
-                    <label variable="locator" form="short" prefix=", " suffix=" "/>
+                    <label variable="locator" form="short" prefix="" suffix=" "/>
                   </group>
                 </if>
                 <else>
@@ -416,28 +423,25 @@
   </macro>
   <macro name="point-locators">
     <choose>
-      <if variable="locator" match="none">
-        <text macro="pages"/>
+      <if type="article-journal article-newspaper article-magazine article chapter bill" match="any">
+        <label prefix="[" suffix=" " variable="locator" form="short"/>
+        <text variable="locator" suffix="]"/>
       </if>
-      <else-if type="article-journal">
-        <text variable="locator" prefix=": "/>
-      </else-if>
-      <else-if type="legal_case"/>
       <else>
-        <group prefix=", ">
+        <group>
           <choose>
-            <if locator="page" match="none">
-              <label variable="locator" form="short" suffix=" "/>
+            <if locator="chapter" match="any">
+              <label/>
             </if>
           </choose>
-          <label variable="locator" form="short" suffix=" "/>
+          <label variable="locator" form="short"/>
           <text variable="locator"/>
         </group>
       </else>
     </choose>
   </macro>
   <macro name="pages">
-    <label variable="page" form="short" prefix=", " suffix=" "/>
+    <label suffix=" " variable="page" form="short"/>
     <text variable="page"/>
   </macro>
   <macro name="locators-chapter">
@@ -445,7 +449,8 @@
       <if type="chapter paper-conference" match="any">
         <choose>
           <if variable="page">
-            <text variable="volume" suffix=":"/>
+            <text variable="volume" prefix="vol. " suffix=","/>
+            <label suffix=" " variable="page" form="short"/>
             <text variable="page"/>
           </if>
         </choose>
@@ -455,7 +460,7 @@
   <macro name="locators-journal">
     <choose>
       <if type="article-journal">
-        <label variable="page" form="short" prefix=", " suffix=" "/>
+        <label suffix=" " variable="page" form="short"/>
         <text variable="page"/>
       </if>
     </choose>
@@ -533,6 +538,16 @@
       </choose>
     </group>
   </macro>
+  <macro name="sort-key">
+    <choose>
+      <if match="any" variable="archive_location">
+        <text value="1"/>
+      </if>
+      <else>
+        <text value="2"/>
+      </else>
+    </choose>
+  </macro>
   <citation et-al-min="4" et-al-use-first="1">
     <layout delimiter="; " suffix=". ">
       <choose>
@@ -566,13 +581,17 @@
           <text macro="issue"/>
           <text macro="locators-newspaper" prefix=", "/>
           <text macro="access-note" prefix=", "/>
-          <text macro="point-locators"/>
+          <text macro="locators-newspaper" prefix=", "/>
+          <text macro="locators-journal" prefix=", "/>
+          <text macro="locators-chapter" prefix=", "/>
+          <text macro="point-locators" prefix=", "/>
         </else>
       </choose>
     </layout>
   </citation>
   <bibliography hanging-indent="true" et-al-min="11" et-al-use-first="7" subsequent-author-substitute="Id." entry-spacing="0">
     <sort>
+      <key macro="sort-key"/>
       <key macro="contributors-sort"/>
       <key variable="title"/>
       <key variable="genre"/>
@@ -587,14 +606,14 @@
         <group delimiter=", ">
           <text macro="container-contributors"/>
           <text macro="container-title"/>
-          <text macro="locators-chapter"/>
         </group>
       </group>
       <text macro="locators"/>
       <text macro="collection-title" prefix=". "/>
       <text macro="issue"/>
-      <text macro="locators-newspaper" prefix=", "/>
-      <text macro="locators-journal"/>
+      <text macro="locators-newspaper" prefix=", " suffix=""/>
+      <text macro="locators-journal" prefix=", " suffix=""/>
+      <text macro="locators-chapter" prefix=", " suffix=""/>
       <text macro="access" prefix=". "/>
     </layout>
   </bibliography>
